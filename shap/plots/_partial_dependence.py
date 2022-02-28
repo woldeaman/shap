@@ -3,7 +3,7 @@ from .. import Explanation
 from ..plots.colors import light_blue_rgb, blue_rgb, red_rgb, red_blue_transparent
 import warnings
 try:
-    import matplotlib.pyplot as pl
+    import matplotlib.pyplot as plt
 except ImportError:
     warnings.warn("matplotlib could not be loaded!")
     pass
@@ -91,13 +91,13 @@ def partial_dependence(ind, model, data, xmin="percentile(0)", xmax="percentile(
 
 
         if ax is None:
-            fig = pl.figure()
-            ax1 = pl.gca()
+            fig = plt.figure()
+            ax1 = plt.gca()
         else:
-            fig = pl.gcf()
-            ax1 = pl.gca()
+            fig = plt.gcf()
+            ax1 = plt.gca()
 
-        #fig, ax1 = pl.subplots(figsize)
+        #fig, ax1 = plt.subplots(figsize)
         ax2 = ax1.twinx()
 
         # the histogram of the data
@@ -188,13 +188,13 @@ def partial_dependence(ind, model, data, xmin="percentile(0)", xmax="percentile(
                 markerfmt="o", basefmt=" ", use_line_collection=True
             )
             stemlines.set_edgecolors([red_rgb if v > 0 else blue_rgb for v in vals])
-            pl.setp(stemlines, 'zorder', -1)
-            pl.setp(stemlines, 'linewidth', 2)
-            pl.setp(markerline, 'color', "black")
-            pl.setp(markerline, 'markersize', 4)
+            plt.setp(stemlines, 'zorder', -1)
+            plt.setp(stemlines, 'linewidth', 2)
+            plt.setp(markerline, 'color', "black")
+            plt.setp(markerline, 'markersize', 4)
 
         if show:
-            pl.show()
+            plt.show()
         else:
             return fig,ax1
 
@@ -229,7 +229,7 @@ def partial_dependence(ind, model, data, xmin="percentile(0)", xmax="percentile(
                 x1[i, j] = xs1[j]
                 vals[i, j] = model(features_tmp).mean()
 
-        fig = pl.figure()
+        fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
 
 
@@ -245,6 +245,6 @@ def partial_dependence(ind, model, data, xmin="percentile(0)", xmax="percentile(
         ax.set_zlabel("E[f(x) | "+ str(feature_names[ind0]) + ", "+ str(feature_names[ind1]) + "]", fontsize=13)
 
         if show:
-            pl.show()
+            plt.show()
         else:
             return fig, ax

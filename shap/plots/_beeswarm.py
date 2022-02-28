@@ -601,16 +601,16 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
 
     row_height = 0.4
     if plot_size == "auto":
-        pl.gcf().set_size_inches(8, len(feature_order) * row_height + 1.5)
+        plt.gcf().set_size_inches(8, len(feature_order) * row_height + 1.5)
     elif type(plot_size) in (list, tuple):
-        pl.gcf().set_size_inches(plot_size[0], plot_size[1])
+        plt.gcf().set_size_inches(plot_size[0], plot_size[1])
     elif plot_size is not None:
-        pl.gcf().set_size_inches(8, len(feature_order) * plot_size + 1.5)
-    pl.axvline(x=0, color="#999999", zorder=-1)
+        plt.gcf().set_size_inches(8, len(feature_order) * plot_size + 1.5)
+    plt.axvline(x=0, color="#999999", zorder=-1)
 
     if plot_type == "dot":
         for pos, i in enumerate(feature_order):
-            pl.axhline(y=pos, color="#cccccc", lw=0.5, dashes=(1, 5), zorder=-1)
+            plt.axhline(y=pos, color="#cccccc", lw=0.5, dashes=(1, 5), zorder=-1)
             shaps = shap_values[:, i]
             values = None if features is None else features[:, i]
             inds = np.arange(len(shaps))
@@ -660,7 +660,7 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
 
                 # plot the nan values in the interaction feature as grey
                 nan_mask = np.isnan(values)
-                pl.scatter(shaps[nan_mask], pos + ys[nan_mask], color="#777777", vmin=vmin,
+                plt.scatter(shaps[nan_mask], pos + ys[nan_mask], color="#777777", vmin=vmin,
                            vmax=vmax, s=16, alpha=alpha, linewidth=0,
                            zorder=3, rasterized=len(shaps) > 500)
 
@@ -670,18 +670,18 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                 cvals_imp[np.isnan(cvals)] = (vmin + vmax) / 2.0
                 cvals[cvals_imp > vmax] = vmax
                 cvals[cvals_imp < vmin] = vmin
-                pl.scatter(shaps[np.invert(nan_mask)], pos + ys[np.invert(nan_mask)],
+                plt.scatter(shaps[np.invert(nan_mask)], pos + ys[np.invert(nan_mask)],
                            cmap=cmap, vmin=vmin, vmax=vmax, s=16,
                            c=cvals, alpha=alpha, linewidth=0,
                            zorder=3, rasterized=len(shaps) > 500)
             else:
 
-                pl.scatter(shaps, pos + ys, s=16, alpha=alpha, linewidth=0, zorder=3,
+                plt.scatter(shaps, pos + ys, s=16, alpha=alpha, linewidth=0, zorder=3,
                            color=color if colored_feature else "#777777", rasterized=len(shaps) > 500)
 
     elif plot_type == "violin":
         for pos, i in enumerate(feature_order):
-            pl.axhline(y=pos, color="#cccccc", lw=0.5, dashes=(1, 5), zorder=-1)
+            plt.axhline(y=pos, color="#cccccc", lw=0.5, dashes=(1, 5), zorder=-1)
 
         if features is not None:
             global_low = np.nanpercentile(shap_values[:, :len(feature_names)].flatten(), 1)
@@ -731,7 +731,7 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
 
                 # plot the nan values in the interaction feature as grey
                 nan_mask = np.isnan(values)
-                pl.scatter(shaps[nan_mask], np.ones(shap_values[nan_mask].shape[0]) * pos,
+                plt.scatter(shaps[nan_mask], np.ones(shap_values[nan_mask].shape[0]) * pos,
                            color="#777777", vmin=vmin, vmax=vmax, s=9,
                            alpha=alpha, linewidth=0, zorder=1)
                 # plot the non-nan values colored by the trimmed feature value
@@ -740,7 +740,7 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                 cvals_imp[np.isnan(cvals)] = (vmin + vmax) / 2.0
                 cvals[cvals_imp > vmax] = vmax
                 cvals[cvals_imp < vmin] = vmin
-                pl.scatter(shaps[np.invert(nan_mask)], np.ones(shap_values[np.invert(nan_mask)].shape[0]) * pos,
+                plt.scatter(shaps[np.invert(nan_mask)], np.ones(shap_values[np.invert(nan_mask)].shape[0]) * pos,
                            cmap=cmap, vmin=vmin, vmax=vmax, s=9,
                            c=cvals, alpha=alpha, linewidth=0, zorder=1)
                 # smooth_values -= nxp.nanpercentile(smooth_values, 5)
@@ -750,12 +750,12 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                     smooth_values /= vmax - vmin
                 for i in range(len(xs) - 1):
                     if ds[i] > 0.05 or ds[i + 1] > 0.05:
-                        pl.fill_between([xs[i], xs[i + 1]], [pos + ds[i], pos + ds[i + 1]],
+                        plt.fill_between([xs[i], xs[i + 1]], [pos + ds[i], pos + ds[i + 1]],
                                         [pos - ds[i], pos - ds[i + 1]], color=colors.red_blue_no_bounds(smooth_values[i]),
                                         zorder=2)
 
         else:
-            parts = pl.violinplot(shap_values[:, feature_order], range(len(feature_order)), points=200, vert=False,
+            parts = plt.violinplot(shap_values[:, feature_order], range(len(feature_order)), points=200, vert=False,
                                   widths=0.7,
                                   showmeans=False, showextrema=False, showmedians=False)
 
@@ -820,18 +820,18 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
             scale = ys.max() * 2 / width  # 2 is here as we plot both sides of x axis
             for i in range(nbins - 1, -1, -1):
                 y = ys[i, :] / scale
-                c = pl.get_cmap(color)(i / (
-                        nbins - 1)) if color in pl.cm.datad else color  # if color is a cmap, use it, otherwise use a color
-                pl.fill_between(x_points, pos - y, pos + y, facecolor=c)
-        pl.xlim(shap_min, shap_max)
+                c = plt.get_cmap(color)(i / (
+                        nbins - 1)) if color in plt.cm.datad else color  # if color is a cmap, use it, otherwise use a color
+                plt.fill_between(x_points, pos - y, pos + y, facecolor=c)
+        plt.xlim(shap_min, shap_max)
 
     elif not multi_class and plot_type == "bar":
         feature_inds = feature_order[:max_display]
         y_pos = np.arange(len(feature_inds))
         global_shap_values = np.abs(shap_values).mean(0)
-        pl.barh(y_pos, global_shap_values[feature_inds], 0.7, align='center', color=color)
-        pl.yticks(y_pos, fontsize=13)
-        pl.gca().set_yticklabels([feature_names[i] for i in feature_inds])
+        plt.barh(y_pos, global_shap_values[feature_inds], 0.7, align='center', color=color)
+        plt.yticks(y_pos, fontsize=13)
+        plt.gca().set_yticklabels([feature_names[i] for i in feature_inds])
 
     elif multi_class and plot_type == "bar":
         if class_names is None:
@@ -846,45 +846,45 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
             class_inds = range(len(shap_values))
         for i, ind in enumerate(class_inds):
             global_shap_values = np.abs(shap_values[ind]).mean(0)
-            pl.barh(
+            plt.barh(
                 y_pos, global_shap_values[feature_inds], 0.7, left=left_pos, align='center',
                 color=color(i), label=class_names[ind]
             )
             left_pos += global_shap_values[feature_inds]
-        pl.yticks(y_pos, fontsize=13)
-        pl.gca().set_yticklabels([feature_names[i] for i in feature_inds])
-        pl.legend(frameon=False, fontsize=12)
+        plt.yticks(y_pos, fontsize=13)
+        plt.gca().set_yticklabels([feature_names[i] for i in feature_inds])
+        plt.legend(frameon=False, fontsize=12)
 
     # draw the color bar
     if color_bar and features is not None and plot_type != "bar" and \
-            (plot_type != "layered_violin" or color in pl.cm.datad):
+            (plot_type != "layered_violin" or color in plt.cm.datad):
         import matplotlib.cm as cm
-        m = cm.ScalarMappable(cmap=cmap if plot_type != "layered_violin" else pl.get_cmap(color))
+        m = cm.ScalarMappable(cmap=cmap if plot_type != "layered_violin" else plt.get_cmap(color))
         m.set_array([0, 1])
-        cb = pl.colorbar(m, ticks=[0, 1], aspect=1000)
+        cb = plt.colorbar(m, ticks=[0, 1], aspect=1000)
         cb.set_ticklabels([labels['FEATURE_VALUE_LOW'], labels['FEATURE_VALUE_HIGH']])
         cb.set_label(color_bar_label, size=12, labelpad=0)
         cb.ax.tick_params(labelsize=11, length=0)
         cb.set_alpha(1)
         cb.outline.set_visible(False)
-        bbox = cb.ax.get_window_extent().transformed(pl.gcf().dpi_scale_trans.inverted())
+        bbox = cb.ax.get_window_extent().transformed(plt.gcf().dpi_scale_trans.inverted())
         cb.ax.set_aspect((bbox.height - 0.9) * 20)
         # cb.draw_all()
 
-    pl.gca().xaxis.set_ticks_position('bottom')
-    pl.gca().yaxis.set_ticks_position('none')
-    pl.gca().spines['right'].set_visible(False)
-    pl.gca().spines['top'].set_visible(False)
-    pl.gca().spines['left'].set_visible(False)
-    pl.gca().tick_params(color=axis_color, labelcolor=axis_color)
-    pl.yticks(range(len(feature_order)), [feature_names[i] for i in feature_order], fontsize=13)
+    plt.gca().xaxis.set_ticks_position('bottom')
+    plt.gca().yaxis.set_ticks_position('none')
+    plt.gca().spines['right'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['left'].set_visible(False)
+    plt.gca().tick_params(color=axis_color, labelcolor=axis_color)
+    plt.yticks(range(len(feature_order)), [feature_names[i] for i in feature_order], fontsize=13)
     if plot_type != "bar":
-        pl.gca().tick_params('y', length=20, width=0.5, which='major')
-    pl.gca().tick_params('x', labelsize=11)
-    pl.ylim(-1, len(feature_order))
+        plt.gca().tick_params('y', length=20, width=0.5, which='major')
+    plt.gca().tick_params('x', labelsize=11)
+    plt.ylim(-1, len(feature_order))
     if plot_type == "bar":
-        pl.xlabel(labels['GLOBAL_VALUE'], fontsize=13)
+        plt.xlabel(labels['GLOBAL_VALUE'], fontsize=13)
     else:
-        pl.xlabel(labels['VALUE'], fontsize=13)
+        plt.xlabel(labels['VALUE'], fontsize=13)
     if show:
-        pl.show()
+        plt.show()
