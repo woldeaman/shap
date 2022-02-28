@@ -8,7 +8,7 @@ import numpy as np
 import scipy as sp
 from scipy.stats import gaussian_kde
 try:
-    import matplotlib.pyplot as pl
+    import matplotlib.pyplot as plt
 except ImportError:
     warnings.warn("matplotlib could not be loaded!")
     pass
@@ -121,7 +121,7 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
         feature_names = np.array([labels['FEATURE'] % str(i) for i in range(num_features)])
 
     if log_scale:
-        pl.xscale('symlog')
+        plt.xscale('symlog')
 
     if clustering is None:
         partition_tree = getattr(shap_values, "clustering", None)
@@ -175,8 +175,8 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
         slow = -v
         shigh = v
 
-        pl.figure(figsize=(1.5 * max_display + 1, 0.8 * max_display + 1))
-        pl.subplot(1, max_display, 1)
+        plt.figure(figsize=(1.5 * max_display + 1, 0.8 * max_display + 1))
+        plt.subplot(1, max_display, 1)
         proj_values = values[:, interaction_sort_inds[0], interaction_sort_inds]
         proj_values[:, 1:] *= 2  # because off diag effects are split in half
         beeswarm(
@@ -186,13 +186,13 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
             plot_size=None,
             max_display=max_display
         )
-        pl.xlim((slow, shigh))
-        pl.xlabel("")
+        plt.xlim((slow, shigh))
+        plt.xlabel("")
         title_length_limit = 11
-        pl.title(shorten_text(feature_names[interaction_sort_inds[0]], title_length_limit))
+        plt.title(shorten_text(feature_names[interaction_sort_inds[0]], title_length_limit))
         for i in range(1, min(len(interaction_sort_inds), max_display)):
             ind = interaction_sort_inds[i]
-            pl.subplot(1, max_display, i + 1)
+            plt.subplot(1, max_display, i + 1)
             proj_values = values[:, ind, interaction_sort_inds]
             proj_values *= 2
             proj_values[:, i] /= 2  # because only off diag effects are split in half
@@ -205,15 +205,15 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
                 plot_size=None,
                 max_display=max_display
             )
-            pl.xlim((slow, shigh))
-            pl.xlabel("")
+            plt.xlim((slow, shigh))
+            plt.xlabel("")
             if i == min(len(interaction_sort_inds), max_display) // 2:
-                pl.xlabel(labels['INTERACTION_VALUE'])
-            pl.title(shorten_text(feature_names[ind], title_length_limit))
-        pl.tight_layout(pad=0, w_pad=0, h_pad=0.0)
-        pl.subplots_adjust(hspace=0, wspace=0.1)
+                plt.xlabel(labels['INTERACTION_VALUE'])
+            plt.title(shorten_text(feature_names[ind], title_length_limit))
+        plt.tight_layout(pad=0, w_pad=0, h_pad=0.0)
+        plt.subplots_adjust(hspace=0, wspace=0.1)
         if show:
-            pl.show()
+            plt.show()
         return
 
     # determine how many top features we will plot
@@ -277,16 +277,16 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
     
     row_height = 0.4
     if plot_size == "auto":
-        pl.gcf().set_size_inches(8, min(len(feature_order), max_display) * row_height + 1.5)
+        plt.gcf().set_size_inches(8, min(len(feature_order), max_display) * row_height + 1.5)
     elif type(plot_size) in (list, tuple):
-        pl.gcf().set_size_inches(plot_size[0], plot_size[1])
+        plt.gcf().set_size_inches(plot_size[0], plot_size[1])
     elif plot_size is not None:
-        pl.gcf().set_size_inches(8, min(len(feature_order), max_display) * plot_size + 1.5)
-    pl.axvline(x=0, color="#999999", zorder=-1)
+        plt.gcf().set_size_inches(8, min(len(feature_order), max_display) * plot_size + 1.5)
+    plt.axvline(x=0, color="#999999", zorder=-1)
 
     # make the beeswarm dots
     for pos, i in enumerate(reversed(feature_inds)):
-        pl.axhline(y=pos, color="#cccccc", lw=0.5, dashes=(1, 5), zorder=-1)
+        plt.axhline(y=pos, color="#cccccc", lw=0.5, dashes=(1, 5), zorder=-1)
         shaps = values[:, i]
         fvalues = None if features is None else features[:, i]
         inds = np.arange(len(shaps))
@@ -336,7 +336,7 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
 
             # plot the nan fvalues in the interaction feature as grey
             nan_mask = np.isnan(fvalues)
-            pl.scatter(shaps[nan_mask], pos + ys[nan_mask], color="#777777", vmin=vmin,
+            plt.scatter(shaps[nan_mask], pos + ys[nan_mask], color="#777777", vmin=vmin,
                         vmax=vmax, s=16, alpha=alpha, linewidth=0,
                         zorder=3, rasterized=len(shaps) > 500)
 
@@ -346,13 +346,13 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
             cvals_imp[np.isnan(cvals)] = (vmin + vmax) / 2.0
             cvals[cvals_imp > vmax] = vmax
             cvals[cvals_imp < vmin] = vmin
-            pl.scatter(shaps[np.invert(nan_mask)], pos + ys[np.invert(nan_mask)],
+            plt.scatter(shaps[np.invert(nan_mask)], pos + ys[np.invert(nan_mask)],
                         cmap=color, vmin=vmin, vmax=vmax, s=16,
                         c=cvals, alpha=alpha, linewidth=0,
                         zorder=3, rasterized=len(shaps) > 500)
         else:
 
-            pl.scatter(shaps, pos + ys, s=16, alpha=alpha, linewidth=0, zorder=3,
+            plt.scatter(shaps, pos + ys, s=16, alpha=alpha, linewidth=0, zorder=3,
                         color=color if colored_feature else "#777777", rasterized=len(shaps) > 500)
 
 
@@ -361,29 +361,29 @@ def beeswarm(shap_values, max_display=10, order=Explanation.abs.mean(0),
         import matplotlib.cm as cm
         m = cm.ScalarMappable(cmap=color)
         m.set_array([0, 1])
-        cb = pl.colorbar(m, ticks=[0, 1], aspect=1000)
+        cb = plt.colorbar(m, ticks=[0, 1], aspect=1000)
         cb.set_ticklabels([labels['FEATURE_VALUE_LOW'], labels['FEATURE_VALUE_HIGH']])
         cb.set_label(color_bar_label, size=12, labelpad=0)
         cb.ax.tick_params(labelsize=11, length=0)
         cb.set_alpha(1)
         cb.outline.set_visible(False)
-        bbox = cb.ax.get_window_extent().transformed(pl.gcf().dpi_scale_trans.inverted())
+        bbox = cb.ax.get_window_extent().transformed(plt.gcf().dpi_scale_trans.inverted())
         cb.ax.set_aspect((bbox.height - 0.9) * 20)
         # cb.draw_all()
 
-    pl.gca().xaxis.set_ticks_position('bottom')
-    pl.gca().yaxis.set_ticks_position('none')
-    pl.gca().spines['right'].set_visible(False)
-    pl.gca().spines['top'].set_visible(False)
-    pl.gca().spines['left'].set_visible(False)
-    pl.gca().tick_params(color=axis_color, labelcolor=axis_color)
-    pl.yticks(range(len(feature_inds)), reversed(yticklabels), fontsize=13)
-    pl.gca().tick_params('y', length=20, width=0.5, which='major')
-    pl.gca().tick_params('x', labelsize=11)
-    pl.ylim(-1, len(feature_inds))
-    pl.xlabel(labels['VALUE'], fontsize=13)
+    plt.gca().xaxis.set_ticks_position('bottom')
+    plt.gca().yaxis.set_ticks_position('none')
+    plt.gca().spines['right'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
+    plt.gca().spines['left'].set_visible(False)
+    plt.gca().tick_params(color=axis_color, labelcolor=axis_color)
+    plt.yticks(range(len(feature_inds)), reversed(yticklabels), fontsize=13)
+    plt.gca().tick_params('y', length=20, width=0.5, which='major')
+    plt.gca().tick_params('x', labelsize=11)
+    plt.ylim(-1, len(feature_inds))
+    plt.xlabel(labels['VALUE'], fontsize=13)
     if show:
-        pl.show()
+        plt.show()
 
 def shorten_text(text, length_limit):
     if len(text) > length_limit:
@@ -505,7 +505,7 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
         feature_names = np.array([labels['FEATURE'] % str(i) for i in range(num_features)])
 
     if use_log_scale:
-        pl.xscale('symlog')
+        plt.xscale('symlog')
 
     # plotting SHAP interaction values
     if not multi_class and len(shap_values.shape) == 3:
@@ -545,8 +545,8 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
         slow = -v
         shigh = v
 
-        pl.figure(figsize=(1.5 * max_display + 1, 0.8 * max_display + 1))
-        pl.subplot(1, max_display, 1)
+        plt.figure(figsize=(1.5 * max_display + 1, 0.8 * max_display + 1))
+        plt.subplot(1, max_display, 1)
         proj_shap_values = shap_values[:, sort_inds[0], sort_inds]
         proj_shap_values[:, 1:] *= 2  # because off diag effects are split in half
         summary_legacy(
@@ -556,13 +556,13 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
             plot_size=None,
             max_display=max_display
         )
-        pl.xlim((slow, shigh))
-        pl.xlabel("")
+        plt.xlim((slow, shigh))
+        plt.xlabel("")
         title_length_limit = 11
-        pl.title(shorten_text(feature_names[sort_inds[0]], title_length_limit))
+        plt.title(shorten_text(feature_names[sort_inds[0]], title_length_limit))
         for i in range(1, min(len(sort_inds), max_display)):
             ind = sort_inds[i]
-            pl.subplot(1, max_display, i + 1)
+            plt.subplot(1, max_display, i + 1)
             proj_shap_values = shap_values[:, ind, sort_inds]
             proj_shap_values *= 2
             proj_shap_values[:, i] /= 2  # because only off diag effects are split in half
@@ -575,15 +575,15 @@ def summary_legacy(shap_values, features=None, feature_names=None, max_display=N
                 plot_size=None,
                 max_display=max_display
             )
-            pl.xlim((slow, shigh))
-            pl.xlabel("")
+            plt.xlim((slow, shigh))
+            plt.xlabel("")
             if i == min(len(sort_inds), max_display) // 2:
-                pl.xlabel(labels['INTERACTION_VALUE'])
-            pl.title(shorten_text(feature_names[ind], title_length_limit))
-        pl.tight_layout(pad=0, w_pad=0, h_pad=0.0)
-        pl.subplots_adjust(hspace=0, wspace=0.1)
+                plt.xlabel(labels['INTERACTION_VALUE'])
+            plt.title(shorten_text(feature_names[ind], title_length_limit))
+        plt.tight_layout(pad=0, w_pad=0, h_pad=0.0)
+        plt.subplots_adjust(hspace=0, wspace=0.1)
         if show:
-            pl.show()
+            plt.show()
         return
 
     if max_display is None:
