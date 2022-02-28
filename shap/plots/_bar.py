@@ -1,6 +1,6 @@
 import warnings
 try:
-    import matplotlib.pyplot as pl
+    import matplotlib.pyplot as plt
 except ImportError:
     warnings.warn("matplotlib could not be loaded!")
     pass
@@ -183,12 +183,12 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
 
     # compute our figure size based on how many features we are showing
     row_height = 0.5
-    pl.gcf().set_size_inches(8, num_features * row_height * np.sqrt(len(values)) + 1.5)
+    plt.gcf().set_size_inches(8, num_features * row_height * np.sqrt(len(values)) + 1.5)
 
     # if negative values are present then we draw a vertical line to mark 0, otherwise the axis does this for us...
     negative_values_present = np.sum(values[:,feature_order[:num_features]] < 0) > 0
     if negative_values_present:
-        pl.axvline(0, 0, 1, color="#000000", linestyle="-", linewidth=1, zorder=1)
+        plt.axvline(0, 0, 1, color="#000000", linestyle="-", linewidth=1, zorder=1)
 
     # draw the bars
     patterns = (None, '\\\\', '++', 'xx', '////', '*', 'o', 'O', '.', '-')
@@ -196,7 +196,7 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
     bar_width = total_width / len(values)
     for i in range(len(values)):
         ypos_offset = - ((i - len(values) / 2) * bar_width + bar_width / 2)
-        pl.barh(
+        plt.barh(
             y_pos + ypos_offset, values[i,feature_inds],
             bar_width, align='center',
             color=[colors.blue_rgb if values[i,feature_inds[j]] <= 0 else colors.red_rgb for j in range(len(y_pos))],
@@ -204,11 +204,11 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
         )
 
     # draw the yticks (the 1e-8 is so matplotlib 3.3 doesn't try and collapse the ticks)
-    pl.yticks(list(y_pos) + list(y_pos + 1e-8), yticklabels + [l.split('=')[-1] for l in yticklabels], fontsize=13)
+    plt.yticks(list(y_pos) + list(y_pos + 1e-8), yticklabels + [l.split('=')[-1] for l in yticklabels], fontsize=13)
 
-    xlen = pl.xlim()[1] - pl.xlim()[0]
-    fig = pl.gcf()
-    ax = pl.gca()
+    xlen = plt.xlim()[1] - plt.xlim()[0]
+    fig = plt.gcf()
+    ax = plt.gca()
     #xticks = ax.get_xticks()
     bbox = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
     width, height = bbox.width, bbox.height
@@ -219,13 +219,13 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
         for j in range(len(y_pos)):
             ind = feature_order[j]
             if values[i,ind] < 0:
-                pl.text(
+                plt.text(
                     values[i,ind] - (5/72)*bbox_to_xscale, y_pos[j] + ypos_offset, format_value(values[i,ind], '%+0.02f'),
                     horizontalalignment='right', verticalalignment='center', color=colors.blue_rgb,
                     fontsize=12
                 )
             else:
-                pl.text(
+                plt.text(
                     values[i,ind] + (5/72)*bbox_to_xscale, y_pos[j] + ypos_offset, format_value(values[i,ind], '%+0.02f'),
                     horizontalalignment='left', verticalalignment='center', color=colors.red_rgb,
                     fontsize=12
@@ -233,7 +233,7 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
 
     # put horizontal lines for each feature row
     for i in range(num_features):
-        pl.axhline(i+1, color="#888888", lw=0.5, dashes=(1, 5), zorder=-1)
+        plt.axhline(i+1, color="#888888", lw=0.5, dashes=(1, 5), zorder=-1)
     
     if features is not None:
         features = list(features)
@@ -246,33 +246,33 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
             except:
                 pass # features[i] must not be a number
     
-    pl.gca().xaxis.set_ticks_position('bottom')
-    pl.gca().yaxis.set_ticks_position('none')
-    pl.gca().spines['right'].set_visible(False)
-    pl.gca().spines['top'].set_visible(False)
+    plt.gca().xaxis.set_ticks_position('bottom')
+    plt.gca().yaxis.set_ticks_position('none')
+    plt.gca().spines['right'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
     if negative_values_present:
-        pl.gca().spines['left'].set_visible(False)
-    pl.gca().tick_params('x', labelsize=11)
+        plt.gca().spines['left'].set_visible(False)
+    plt.gca().tick_params('x', labelsize=11)
 
-    xmin,xmax = pl.gca().get_xlim()
-    ymin,ymax = pl.gca().get_ylim()
+    xmin,xmax = plt.gca().get_xlim()
+    ymin,ymax = plt.gca().get_ylim()
     
     if negative_values_present:
-        pl.gca().set_xlim(xmin - (xmax-xmin)*0.05, xmax + (xmax-xmin)*0.05)
+        plt.gca().set_xlim(xmin - (xmax-xmin)*0.05, xmax + (xmax-xmin)*0.05)
     else:
-        pl.gca().set_xlim(xmin, xmax + (xmax-xmin)*0.05)
+        plt.gca().set_xlim(xmin, xmax + (xmax-xmin)*0.05)
     
     # if features is None:
     #     pl.xlabel(labels["GLOBAL_VALUE"], fontsize=13)
     # else:
-    pl.xlabel(xlabel, fontsize=13)
+    plt.xlabel(xlabel, fontsize=13)
 
     if len(values) > 1:
-        pl.legend(fontsize=12)
+        plt.legend(fontsize=12)
 
     # color the y tick labels that have the feature values as gray
     # (these fall behind the black ones with just the feature name)
-    tick_labels = pl.gca().yaxis.get_majorticklabels()
+    tick_labels = plt.gca().yaxis.get_majorticklabels()
     for i in range(num_features):
         tick_labels[i].set_color("#999999")
 
@@ -284,15 +284,15 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
         ylines,xlines = dendrogram_coords(feature_pos, partition_tree)
         
         # plot the distance cut line above which we don't show tree edges
-        xmin,xmax = pl.xlim()
+        xmin,xmax = plt.xlim()
         xlines_min,xlines_max = np.min(xlines),np.max(xlines)
         ct_line_pos = (clustering_cutoff / (xlines_max - xlines_min)) * 0.1 * (xmax - xmin) + xmax
-        pl.text(
+        plt.text(
             ct_line_pos + 0.005 * (xmax - xmin), (ymax - ymin)/2, "Clustering cutoff = " + format_value(clustering_cutoff, '%0.02f'),
             horizontalalignment='left', verticalalignment='center', color="#999999",
             fontsize=12, rotation=-90
         )
-        l = pl.axvline(ct_line_pos, color="#dddddd", dashes=(1, 1))
+        l = plt.axvline(ct_line_pos, color="#dddddd", dashes=(1, 1))
         l.set_clip_on(False)
         
         for (xline, yline) in zip(xlines, ylines):
@@ -305,7 +305,7 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
 
                 # only draw if we are not going past the bottom of the plot
                 if yline.max() < max_display:
-                    l = pl.plot(
+                    l = plt.plot(
                         xv * 0.1 * (xmax - xmin) + xmax,
                         max_display - np.array(yline),
                         color="#999999"
@@ -314,7 +314,7 @@ def bar(shap_values, max_display=10, order=Explanation.abs, clustering=None, clu
                         v.set_clip_on(False)
     
     if show:
-        pl.show()
+        plt.show()
 
 
 
@@ -368,12 +368,12 @@ def bar_legacy(shap_values, features=None, feature_names=None, max_display=None,
     # 
     feature_inds = feature_order[:max_display]
     y_pos = np.arange(len(feature_inds), 0, -1)
-    pl.barh(
+    plt.barh(
         y_pos, shap_values[feature_inds],
         0.7, align='center',
         color=[colors.red_rgb if shap_values[feature_inds[i]] > 0 else colors.blue_rgb for i in range(len(y_pos))]
     )
-    pl.yticks(y_pos, fontsize=13)
+    plt.yticks(y_pos, fontsize=13)
     if features is not None:
         features = list(features)
 
@@ -390,14 +390,14 @@ def bar_legacy(shap_values, features=None, feature_names=None, max_display=None,
             yticklabels.append(feature_names[i] + " = " + str(features[i]))
         else:
             yticklabels.append(feature_names[i])
-    pl.gca().set_yticklabels(yticklabels)
-    pl.gca().xaxis.set_ticks_position('bottom')
-    pl.gca().yaxis.set_ticks_position('none')
-    pl.gca().spines['right'].set_visible(False)
-    pl.gca().spines['top'].set_visible(False)
+    plt.gca().set_yticklabels(yticklabels)
+    plt.gca().xaxis.set_ticks_position('bottom')
+    plt.gca().yaxis.set_ticks_position('none')
+    plt.gca().spines['right'].set_visible(False)
+    plt.gca().spines['top'].set_visible(False)
     #pl.gca().spines['left'].set_visible(False)
     
-    pl.xlabel("SHAP value (impact on model output)")
+    plt.xlabel("SHAP value (impact on model output)")
     
     if show:
-        pl.show()
+        plt.show()
